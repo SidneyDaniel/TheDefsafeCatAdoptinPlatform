@@ -10,5 +10,13 @@ export default defineNuxtConfig({
   ],
   alias: {
     pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs"
+  },
+   colorMode: {
+    preference: 'light', 
+    fallback: 'light', 
+    classSuffix: ''
+  },
+  app:{
+    pageTransition: {name:'page', mode: 'out-in'}
   }
 })
