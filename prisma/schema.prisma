@@ -9,3 +9,38 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id               Int               @id @default(autoincrement())
+  name             String
+  email            String            @unique
+  phone            String
+  description      String
+  adoptedCatsIds   Int[]
+  adoptionRequests AdoptionRequest[]
+
+  Cat Cat[]
+}
+
+model Cat {
+  id               Int               @id @default(autoincrement())
+  image            String
+  name             String
+  description      String
+  owner            User?             @relation(fields: [ownerId], references: [id])
+  ownerId          Int?
+  adoptionRequests AdoptionRequest[]
+}
+
+model AdoptionRequest {
+  id        Int      @id @default(autoincrement())
+  catId     Int      @unique
+  userId    Int
+  status    String   @default("pending") // pending, approved, rejected, canceled
+  createdAt DateTime @default(now())
+
+  cat  Cat  @relation(fields: [catId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([catId, userId])
+}

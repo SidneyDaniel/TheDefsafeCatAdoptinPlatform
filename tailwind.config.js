@@ -29,6 +29,19 @@ module.exports = {
               900: '#4e2096',
               950: '#4e2096',
             },
+            charcoalGray: {
+              50: '#f5f6f6',
+              100: '#e6e7e7',
+              200: '#d0d1d1',
+              300: '#afb0b1',
+              400: '#878989',
+              500: '#6c6e6e',
+              600: '#5c5d5e',
+              700: '#4d4e4e',
+              800: '#454545',
+              900: '#3c3d3d',
+              950: '#262626',
+            }
           },
           backgroundImage:{
             'paw-pattern': "url(/public/Background.svg)",
