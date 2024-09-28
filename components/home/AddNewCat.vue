@@ -3,15 +3,19 @@ const isOpen = ref(false)
 
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
+import { v4 as uuidv4 } from 'uuid';
+import { useCatStore } from '~/stores/catStore'
 
 const toast = useToast()
+const client = useSupabaseClient()
+const useStore = useCatStore()
 
 const schema = z.object({
   name: z.string(),
   description: z.string()
 })
 
-type Schema = { name: String, description: String }
+type Schema = { image: File , name: String, description: String }
 
 const state = reactive({
   image: undefined,
@@ -19,28 +23,74 @@ const state = reactive({
   description: undefined,
 })
 
+let file = ref(null)
+let fileDisplay = ref(null)
+let fileData: Ref<File | null> = ref(null)
+
+const onChange = () => {
+    const fileInput = event?.target as HTMLInputElement
+    const selectedFile = fileInput.files?.[0]
+    const fileUrl = ref()
+
+    if (selectedFile) {
+        fileUrl.value = URL.createObjectURL(selectedFile)
+    
+        
+        fileDisplay.value = fileUrl.value
+        fileData.value = selectedFile
+    }
+
+    console.log(fileDisplay.value, fileData.value);
+    
+}
+
 const errorMsg = ref()
 const loading = ref(false)
 
 async function onSubmit (event: FormSubmitEvent<Schema>) {
-  console.log(event.data)
+  loading.value = true;
 
-//   try {
-//     loading.value = true
-//     const {error} =  await client.auth.signInWithPassword({
-//         email: event.data.email,
-//         password: event.data.password
-//     })
-//     if (error) throw error;
-//     router.push('/home')
-//   } catch (error) {
-//     errorMsg.value = (error as Error).message
-//     toast.add({title: `${errorMsg.value}`})
-//     console.log(errorMsg);
-//     console.error(error);  
-//   } finally {
-//     loading.value = false
-//   }
+  const image = event.data.image;
+  const name = event.data.name;
+  const description  = event.data.description;
+  const uuiGenerator = uuidv4()
+  const unique_ui = ref() 
+
+  unique_ui.value = uuiGenerator
+
+  console.log(event.data)
+  if (fileData.value) {
+    const { data, error } = await client
+        .storage
+        .from('Cat-Adoption-Files')
+        .upload(`${unique_ui.value}`, fileData.value)
+        
+        if (data) {
+            toast.add({title: `Cat image whith th ID: ${data?.id} added in the collection`})
+        } else {
+            toast.add({title: `Error: ${error?.message}, caused by :${error?.cause}`})
+        }
+
+  }
+
+  try {
+    await useFetch(`/api/create-cats`, {
+        method: 'POST',
+        body:  {
+            image: unique_ui.value,
+            name: name,
+            description: description
+        } 
+    })
+
+    await useStore.getAllCats()
+  } catch (error) {
+    console.log(error);
+    loading.value = false
+    
+  }finally{
+    loading.value = false
+  }
 }
 </script>
 
@@ -74,7 +124,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
                     <template #label>
                         <label class="text-primary text-base font-semibold">Image</label>
                     </template>
-                    <UInput v-model="state.image" type="file" size="xl" placeholder="URL and Upload" icon="i-ph-camera-fill" color="primary" class="!order-2" />
+                    <UInput v-model="state.image" @input="onChange" type="file" size="xl" placeholder="URL and Upload" icon="i-ph-camera-fill" color="primary" class="!order-2" accept=".jpg, .jpeg, .png" />
                 </UFormGroup>
 
                 <UFormGroup name="name">

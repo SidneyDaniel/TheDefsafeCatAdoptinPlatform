@@ -43,7 +43,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   }
 }
 
-definePageMeta({colorMode:'light', layout: false})
+definePageMeta({colorMode:'light', layout: 'custom'})
 </script>
 
 <template>

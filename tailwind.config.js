@@ -45,7 +45,8 @@ module.exports = {
           },
           backgroundImage:{
             'paw-pattern': "url(/public/Background.svg)",
-            'cat': "url(/public/Cat.svg)"
+            'cat': "url(/public/Cat.svg)",
+            'catImage': "url(/public/catImage2.svg)"
           }
         }
       }
