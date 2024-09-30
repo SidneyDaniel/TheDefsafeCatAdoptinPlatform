@@ -2,6 +2,7 @@
   <div class="flex justify-center items-center w-screen h-screen">
     <NuxtRouteAnnouncer />
     <!-- <NuxtWelcome /> -->
+    <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage/>
     </NuxtLayout>
