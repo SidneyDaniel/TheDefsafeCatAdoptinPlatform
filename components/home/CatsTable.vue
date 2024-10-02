@@ -165,14 +165,18 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 
 }
 
-// async function getImageUrl(fileName: string) {
-//   const { data } = await client
-//         .storage
-//         .from('Cat-Adoption-Files')
-//         .getPublicUrl(fileName)
-  
-//   return data.publicUrl 
-// }
+function getImageUrl(fileName: string) {
+  try {
+    const { data } = client
+        .storage
+        .from('Cat-Adoption-Files')
+        .getPublicUrl(fileName)
+    
+  return data?.publicUrl 
+  } catch (error) {
+    return null
+  }
+}
 </script>
 
 <template>
@@ -193,7 +197,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
         icon="i-heroicons-photo"
         chip-position="top-right"
         size="sm"
-        :src="`https://fkgywnnadbbpjmyhjyda.supabase.co/storage/v1/object/public/Cat-Adoption-Files/${row.image}`"
+        :src="`${getImageUrl(row.image)}`"
         alt="Avatar"
       />
     </template>
