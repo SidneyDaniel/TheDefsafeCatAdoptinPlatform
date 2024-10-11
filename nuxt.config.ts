@@ -19,5 +19,20 @@ export default defineNuxtConfig({
   app:{
     pageTransition: {name:'page', mode: 'out-in'},
     layoutTransition: { name: 'layout', mode: 'out-in' }
+  },
+  supabase: {
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      include: undefined,
+      exclude: ['/', '/listOfCats','/login'],
+      cookieRedirect: false,
+    },
+    cookieOptions: {
+      maxAge: 60 * 60 * 8,
+      sameSite: 'lax',
+      secure: true,
+      // httpOnly: true
+    }
   }
 })

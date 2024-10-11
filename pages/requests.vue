@@ -9,7 +9,7 @@ definePageMeta({colorMode:'light',  layout: 'default'})
             request page
         </header>
         <main class="w-full">
-            
+            <RequestsRequestTable/>
         </main>
     </section>
 </template>

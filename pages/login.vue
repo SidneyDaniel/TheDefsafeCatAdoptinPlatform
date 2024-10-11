@@ -32,7 +32,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
         password: event.data.password
     })
     if (error) throw error;
-    router.push('/home')
+    router.push('/confirm')
   } catch (error) {
     errorMsg.value = (error as Error).message
     toast.add({title: `${errorMsg.value}`})
@@ -43,7 +43,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   }
 }
 
-definePageMeta({colorMode:'light', layout: 'custom'})
+definePageMeta({colorMode:'light', layout: 'custom', name: 'login'})
 </script>
 
 <template>

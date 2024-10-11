@@ -24,7 +24,7 @@
   </template>
   
   <script setup lang="ts">
-  definePageMeta({colorMode:'light',  layout: 'custom'})
+  definePageMeta({colorMode:'light',  layout: 'custom', name: 'index'})
   </script>
   
   <style scoped>
