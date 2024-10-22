@@ -46,15 +46,6 @@ onMounted(() => {
     })
 })
 
-// watch((adoptionReqs.value, user.value, cats.value), () => {
-// console.group();
-// console.log(adoptionReqs.value);
-// console.log(user.value);
-// console.log(cats.value);
-// console.groupEnd();
-
-// }, { deep: true })
-
 
 const columnsRequest = [{
   key: 'id',
@@ -72,38 +63,6 @@ const columnsRequest = [{
   key: 'actions'
 }]
 
-const columns = [{
-  key: 'id',
-  label: 'ID'
-},{
-  key: 'name',
-  label: 'Name'
-},  {
-  key: 'phone',
-  label: 'Phone'
-}, {
-  key: 'Description',
-  label: 'Status'
-}, {
-  key: 'actions'
-}]
-
-const columnsCat = [{
-  key: 'image',
-  label: 'Image'
-},{
-  key: 'name',
-  label: 'Name'
-},  {
-  key: 'description',
-  label: 'Description'
-}, {
-  key: 'condition',
-  label: 'Condition'
-}, {
-  key: 'actions'
-}]
-
 function getUserData(id:number) {
   const us = user.value.find((u) => u.id === id)
   return us ? us : null as unknown as User
@@ -117,7 +76,7 @@ function getCatData(id: number) {
 
 // const deleteCat = async(id: any, image: string[]) =>{
 //   let res = confirm('Are you sure you want to delete this post?')
-
+  
 //   if (!res) return
 
 //   try {
@@ -134,6 +93,49 @@ function getCatData(id: number) {
 
 //   }
 // }
+
+
+function getStatusFromParams(stat: string) {
+  switch (stat) {
+    case 'approve':
+      return 'approved';
+    case 'cancel':
+      return 'canceled';
+    case 'reject':
+      return 'rejected';
+    default:
+      return 'pending'; 
+  }
+}
+
+
+const updateStatus = async(id: any, catID: number ,userID: number ,statusReceived: string) =>{
+  let res = confirm('Are you sure you want to set this status?')
+  let setNewStatus = ref() 
+
+  if (!res) return
+  const a = getStatusFromParams(statusReceived)
+  setNewStatus.value = a
+  console.log('Status registrado: ',id, setNewStatus.value);
+  
+  try {
+     await useFetch(`/api/update-status/${id}`, {
+      method: 'PUT',
+      body: {
+        status: setNewStatus,
+        userId: userID,
+        catId: catID
+      }
+    }) 
+  } catch (error) {
+    console.log(error);
+  } finally{
+    await useAdoption.getAllAdoptions()
+    await useUsers.getAllUsers()
+    await useCats.getAllCats()
+
+  }
+}
 
 
 // const pet: ComputedRef<AdoptionRequest[]> = computed(() => adoptionReqs.value || [])
@@ -174,17 +176,14 @@ function getImageUrl(fileName: string) {
 //pending, approved, rejected, canceled
 function currentStatus(stat: string){
   switch (stat) {
-    case stat: 'pending'
+    case 'pending':
       return 'orange'
-
-    case stat: 'approved'
-    return 'green'
-
-     case stat: 'rejected'
-    return 'red'
-
-      case stat: 'canceled'
-    return 'yellow'
+    case 'approved':
+      return 'green'
+    case 'rejected':
+      return 'red'
+    case 'canceled':
+      return 'yellow'
     default:
       break;
   }
@@ -192,46 +191,48 @@ function currentStatus(stat: string){
 </script>
 
 <template>
-  <!-- <UTable  :rows="pet" :columns="columns" class="border rounded-xl">
-    <template #actions-data="{ row }">
-      <UDropdown :items="items(row)">
-        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
-      </UDropdown>
-    </template>
-
-    <template #image-data="{ row }">
-      <UAvatar
-        :chip-color="currentStatus(row.condition)"
-        icon="i-heroicons-photo"
-        chip-position="top-right"
-        size="sm"
-        :src="`${getImageUrl(row.image)}`"
-        alt="Avatar"
-      />
-    </template>
-    
-    <template #condition-data="{row}">
-      <UBadge class="w-20 grid justify-center" :color="currentStatus(row.condition)">{{ row.condition }}</UBadge>
-    </template>
-  </UTable>
-  {{pet}} -->
-
   <UTable :rows="adoptionReqs" :columns="columnsRequest" class="border rounded-xl">
     <template #expand="{ row }">
       <div class="p-4">
         <pre>
-          <span class="flex flex-row w-fit gap-10 border rounded-md p-5">
-            <UChip size="3xl" class="w-fit" position="bottom-right" :ui="{ base: 'rounded-lg ring-1', size: { '3xl' : 'h-fit min-w-[1.25rem] text-[14px] p-1'}}">
-                <img :src="`${ getImageUrl( getCatData(row.catId).image ) }`" :key="row.id" alt="" class="w-56 h-56 rounded-xl object-cover relative">
-              
-                <template #content>
-                  <span class="flex gap-2">
-                    <UIcon name="i-solar-cat-bold" class="w-5 h-5" />
-                    <h2> {{ getCatData(row.catId).name}} </h2>
-                  </span>
-                </template>
-            </UChip>        
-          </span>
+          <div class="flex flex-row w-fit gap-8 border rounded-md p-5">
+            <div class="flex flex-row w-fit gap-10">
+              <UChip size="3xl" class="w-fit h-fit" position="bottom-right" :ui="{ base: 'rounded-lg ring-1', size: { '3xl' : 'h-fit min-w-[1.25rem] text-[14px] p-1'}}">
+                  <img :src="`${ getImageUrl( getCatData(row.catId).image ) }`" :key="row.id" alt="" class="w-48 h-48 rounded-xl object-cover relative">
+                  <template #content>
+                    <span class="flex gap-2">
+                      <UIcon name="i-solar-cat-bold" class="w-5 h-5" />
+                      <h2> {{ getCatData(row.catId).name}} </h2>
+                    </span>
+                  </template>
+              </UChip> 
+              <UDivider icon="i-arcticons-cats-and-soup" orientation="vertical"/>
+              <div style="font-family: 'Inter', sans-serif" class="flex">
+                <ul class="flex flex-col gap-3">
+                  <!-- <h1 class="">Request from</h1> -->
+                  <UKbd size="md">Request From</UKbd>
+                  <li class="flex flex-col">
+                    <h1 class="text-primary font-semibold">Name</h1>
+                    <h2 class="text-[15px]">{{ getUserData(row.userId).name }}</h2>
+                  </li>
+                  <li class="flex flex-col">
+                    <h1 class="text-primary font-semibold">Phone number</h1>
+                    <h2 class="text-[15px]">{{ getUserData(row.userId).phone }}</h2>
+                  </li>
+                  <li class="flex flex-col">
+                    <h1 class="text-primary font-semibold">Email</h1>
+                    <h2 class="text-[15px]">{{ getUserData(row.userId).email }}</h2>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="flex flex-col gap-3 w-fit">
+              <UButton size="sm" color="gray"square icon="i-mdi-light-cancel" @click="updateStatus(row.id, row.catId, row.userId, 'reject')"/>
+              <UButton size="sm" color="red" icon="i-material-symbols-light-cancel-outline" @click="updateStatus(row.id, row.catId,row.userId, 'cancel')"/>
+              <UButton size="sm" color="green" icon="i-fluent:checkmark-circle-12-regular" @click="updateStatus(row.id, row.catId, row.userId,'approve')"/>     
+            </div>
+          </div>
+        
         </pre>
       </div>
     </template>
@@ -250,19 +251,6 @@ function currentStatus(stat: string){
       {{ new Date(row.createdAt).toDateString() ,'in', new Date(row.createdAt).getTime() }}
     </template>
   </UTable>
-
-  <!-- <div class="flex flex-col gap-10">
-    <span>
-      {{ adoptionReqs }}
-    </span>
-    <span>
-      {{ user }}
-    </span>
-    <span>
-      {{ cats }}
-    </span>
-
-  </div> -->
 </template>
 
 

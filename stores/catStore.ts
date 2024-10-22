@@ -1,13 +1,13 @@
-import type { AdoptionRequest } from "@prisma/client";
+import type { AdoptionRequest, Cat } from "@prisma/client";
 
-type Cat = {
-    id: number;
-    image: string;
-    name: string;
-    description: string;
-    ownerId: number | null;
-    adoptionRequests: AdoptionRequest[];
-};
+// type Cat = {
+//     id: number;
+//     image: string;
+//     name: string;
+//     description: string;
+//     ownerId: number | null;
+//     adoptionRequests: AdoptionRequest[];
+// };
 
 export const useCatStore = defineStore('cats', {
     state: () => ({
