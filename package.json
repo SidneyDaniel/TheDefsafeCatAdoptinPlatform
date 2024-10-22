@@ -21,7 +21,7 @@
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@prisma/client": "^5.20.0",
+    "@prisma/client": "^5.21.1",
     "@types/uuid": "^10.0.0",
     "zod": "^3.23.8"
   }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const isOpen = ref(false)
 
-import type { AdoptionRequest } from '@prisma/client';
+import type {  Cat } from '@prisma/client';
 import { useCatStore } from '~/stores/catStore'
 import type { FormSubmitEvent } from '#ui/types'
 import { z } from 'zod'
@@ -14,14 +14,14 @@ const schema = z.object({
   description: z.string()
 })
 
-type Cat = {
-    id: number;
-    image: string;
-    name: string;
-    description: string;
-    ownerId?: number | null;
-    adoptionRequests?: AdoptionRequest[];
-};
+// type Cat = {
+//     id: number;
+//     image: string;
+//     name: string;
+//     description: string;
+//     ownerId?: number | null;
+//     adoptionRequests?: AdoptionRequest[];
+// };
 
 const state = reactive({
   image: undefined,
@@ -55,8 +55,8 @@ onMounted(() => {
                 id: cat.id,
                 name: cat.name,
                 image: cat.image,
-                description: cat.description,
-                condition: cat.adoptionRequests?.map(status => ({ ...status }))
+                description: cat.description, 
+                ownerId: cat?.ownerId
               }
             })
             isCat.value = true
@@ -83,7 +83,7 @@ const columns = [{
   key: 'description',
   label: 'Description'
 }, {
-  key: 'condition',
+  key: 'ownerId',
   label: 'Condition'
 }, {
   key: 'actions'
@@ -202,8 +202,8 @@ function getImageUrl(fileName: string) {
       />
     </template>
     
-    <template #condition-data="{row}">
-      <UBadge class="w-20 grid justify-center" :color="row.condition ? 'orange': 'green'">{{ row.condition ? 'Adopted' : 'Not adopted' }}</UBadge>
+    <template #ownerId-data="{row}">
+      <UBadge class="w-20 grid justify-center" :color="!row.ownerId ? 'orange': 'green'">{{ row.ownerId ? 'Adopted' : 'Not adopted' }}</UBadge>
     </template>
   </UTable>
 
