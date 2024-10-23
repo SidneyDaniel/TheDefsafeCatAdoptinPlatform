@@ -51,10 +51,10 @@ const toggleMode = () => useColorMode().value= nextMode.value
 </script>
 
 <template>
-  <main class="size-full flex justify-center items-center">
+  <main class="size-full flex justify-center items-center gap-4 p-5">
 
 
-    <div class="flex flex-col justify-evenly h-full w-96 border">
+    <div class="flex flex-col justify-evenly h-full w-96 border rounded-xl">
       <h1 class="flex items-center gap-2 text-primary font-medium text-2xl p-1">
         <UIcon name="i-ph-cat-fill" class="text-inherit size-16" />
         Cat Adoption Platform

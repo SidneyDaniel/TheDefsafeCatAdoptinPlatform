@@ -2,7 +2,7 @@
 const isOpen = ref(false)
 const catClicked: Ref = ref(null)
 
-import type { AdoptionRequest } from '@prisma/client';
+import type { Cat } from '@prisma/client';
 import { useCatStore } from '~/stores/catStore'
 import type { FormSubmitEvent } from '#ui/types'
 import { z } from 'zod'
@@ -18,14 +18,14 @@ const schema = z.object({
   description: z.string()
 })
 
-type Cat = {
-    id: number;
-    image: string;
-    name: string;
-    description: string;
-    ownerId?: number | null;
-    adoptionRequests?: AdoptionRequest[];
-};
+// type Cat = {
+//     id: number;
+//     image: string;
+//     name: string;
+//     description: string;
+//     ownerId?: number | null;
+//     adoptionRequests?: AdoptionRequest[];
+// };
 
 const state = reactive({
   name: undefined,
@@ -61,8 +61,8 @@ onMounted(() => {
                 name: cat.name,
                 image: cat.image,
                 description: cat.description,
-                condition: cat.adoptionRequests?.map(status => ({ ...status }))
-              }
+                ownerId: cat?.ownerId
+            }
             })
             isCat.value = true
 
@@ -168,7 +168,7 @@ definePageMeta({colorMode:'light',  layout: 'custom'})
                         </div>
                         <h1 class="text-2xl font-semibold">{{ cat.name }}</h1>
                         <p>{{ cat.description }}</p>
-                        <UButton label="Adopt" size="xl" block class="h-12 grid" @click="takeCatData(cat.id)" />
+                        <UButton :label="!cat.ownerId ? 'Adopt': 'Already Adopted'" :disabled="cat.ownerId !== null" size="xl" block class="h-12 grid" @click="takeCatData(cat.id)" />
                     </div>    
                 </UCard>
             </div>
