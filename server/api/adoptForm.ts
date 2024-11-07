@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 const prisma = new PrismaClient();
 
 interface FormValue {
@@ -12,8 +13,15 @@ interface FormValue {
 
 export default defineEventHandler(async (event) => {
     const body: FormValue = await readBody(event);
+    const cat = await prisma.cat.findUnique({
+        where: { id: body.catSelected },
+    })
+
+    console.log(cat?.ownerId);
 
     try {
+        if (cat?.ownerId) return {success: false, message: 'This cat already has a owner!', code: 400}
+        
         const result = await prisma.$transaction(async (tx) => {
             const user = await tx.user.create({
                 data: {
@@ -39,15 +47,17 @@ export default defineEventHandler(async (event) => {
         return {
             success: true,
             message: "User anc request created",
-            data: result
+            data: result,
+            code: 200
         }
         
     } catch (error) {
-        const err = error as Error
+        const typedError = error as PrismaClientKnownRequestError
         return {
             success: false,
             message: "Error please try again",
-            error: err.message,
+            error: typedError.message,
+            code: typedError.code
         }
     }
 })

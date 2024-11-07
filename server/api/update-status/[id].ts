@@ -70,30 +70,30 @@ export default defineEventHandler(async (event) => {
             }
 
 
-            if (body.status === 'rejected') { 
-                try {
-                    const userToDelete = await tx.user.findUnique({
-                        where: { id: body.userId },
-                    });
+            // if (body.status === 'rejected') { 
+            //     try {
+            //         const userToDelete = await tx.user.findUnique({
+            //             where: { id: body.userId },
+            //         });
 
-                    const deleteStatus = await tx.user.delete({ 
-                        where: { id: body.userId } 
-                    });
+            //         const deleteStatus = await tx.user.delete({ 
+            //             where: { id: body.userId } 
+            //         });
                     
-                    if( userToDelete ) {
-                        return deleteStatus
-                    } else {
-                        console.warn(`User with ID ${body.userId} not found for deletion.`);
-                    }
-                } catch (error) {
-                    const typedError = error as Error
-                    throw new Error(typedError.message); 
-                } finally {
-                    return updateStatus
-                }
+            //         if( userToDelete ) {
+            //             return deleteStatus
+            //         } else {
+            //             console.warn(`User with ID ${body.userId} not found for deletion.`);
+            //         }
+            //     } catch (error) {
+            //         const typedError = error as Error
+            //         throw new Error(typedError.message); 
+            //     } finally {
+            //         return updateStatus
+            //     }
                 
-                // await tx.adoptionRequest.delete({ where: {id: body.id}})
-            } 
+            //     // await tx.adoptionRequest.delete({ where: {id: body.id}})
+            // } 
             
         })
                 
