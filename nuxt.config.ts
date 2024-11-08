@@ -9,7 +9,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt'
   ],
   alias: {
-    pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs"
+    pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs",
+    ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js"
   },
    colorMode: {
     preference: 'light', 
@@ -33,6 +34,8 @@ export default defineNuxtConfig({
       sameSite: 'lax',
       secure: true,
       // httpOnly: true
-    }
+    },
+    url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    key: process.env.NUXT_PRIVATE_SUPABASE_KEY
   }
 })
